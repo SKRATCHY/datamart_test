@@ -4,7 +4,6 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
-
 def fechas_y_probabilidades(start_date, end_date):
     fechas = pd.DataFrame(columns=["fecha","prob"])
     start_date = start_date
@@ -52,12 +51,14 @@ def data_generation():
         raw_data.at[i,"product_id"] = np.random.randint(1,1001)
         raw_data.at[i,"quantity"] = np.random.randint(1,21)
         raw_data.at[i,"discount"] = np.random.random(1)*0.3
-        raw_data.at[i,"price"] = (np.random.random(1)*500) * (1-raw_data.at[i,"discount"])
+        raw_data.at[i,"price"] = ((raw_data.loc[i,"quantity"]/20)*(np.random.random(1))*500)*(1-raw_data.loc[i,"discount"]) #Se normalizan las cantidades y se genera precio basado en descuento
         raw_data.at[i,"order_date"] = np.random.choice(fechas["fecha"], p = fechas["prob_norm"]) #Distribución creciente, y con mayor probabilidades en junio y diciembre
         raw_data.at[i,"shipping_priority"] = shipping[np.random.randint(len(shipping))]
         raw_data.at[i,"region"] = region[np.random.randint(len(region))]
 
     return raw_data
+
+
 
 def insert_noise(raw_data):
 
