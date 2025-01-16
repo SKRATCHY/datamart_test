@@ -57,6 +57,37 @@ def data_generation():
         raw_data.at[i,"shipping_priority"] = shipping[np.random.randint(len(shipping))]
         raw_data.at[i,"region"] = region[np.random.randint(len(region))]
 
-    raw_data
-
     return raw_data
+
+def insert_noise(raw_data):
+
+    random_noise = {
+        1: "NULL",
+        2: -9999999,
+        3: "",
+        4: None,
+        5: "undefined",
+        6: np.nan
+    }
+    for i in range(raw_data.shape[0]):
+        if np.random.choice([False,True], p=[.95,.05]): #Sólo se hará al 5 porciento de las filas
+            num_columns = np.random.randint(3,6) #random columns entre 3 y 5
+            rand_columns = []
+            j=0
+            while j < num_columns:
+                num = np.random.randint(1,raw_data.shape[1]) #columna aleatoria para ingresar ruida, se excluye la primera porque es el uuid
+                if num not in rand_columns:
+                    rand_columns.append(num)
+                    j+=1
+            for column in rand_columns:
+                raw_data.at[i,raw_data.columns[column]] = random_noise[np.random.randint(1,7)]
+    return raw_data
+
+def main():
+    raw_data = data_generation()
+    raw_data = insert_noise(raw_data)
+
+    raw_data.to_csv("raw_sales_data.csv", index=False)
+
+if __name__ == "__main__":
+    main()
